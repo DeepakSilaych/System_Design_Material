@@ -15,9 +15,9 @@
 
 #### English
 - **Class UML**: [https://www.youtube.com/watch?v=6XrL5jXmTwM](https://www.youtube.com/watch?v=6XrL5jXmTwM)
-- **Sequence UML**: [https://www.youtube.com/watch?v=pCK6prSq8aw&list=PLUoebdZqEHTxpGCwKrb82cIvHNoNaBb4R&index=9](https://www.youtube.com/watch?v=pCK6prSq8aw&list=PLUoebdZqEHTxpGCwKrb82cIvHNoNaBb4R&index=9)
-- **ER Diagram Part 1**: [https://www.youtube.com/watch?v=xsg9BDiwiJE&list=PLUoebdZqEHTxpGCwKrb82cIvHNoNaBb4R&index=1](https://www.youtube.com/watch?v=xsg9BDiwiJE&list=PLUoebdZqEHTxpGCwKrb82cIvHNoNaBb4R&index=1)
-- **ER Diagram Part 2**: [https://www.youtube.com/watch?v=hktyW5Lp0Vo&list=PLUoebdZqEHTxpGCwKrb82cIvHNoNaBb4R&index=2](https://www.youtube.com/watch?v=hktyW5Lp0Vo&list=PLUoebdZqEHTxpGCwKrb82cIvHNoNaBb4R&index=2)
+- **Sequence UML**: [https://www.youtube.com/watch?v=pCK6prSq8aw](https://www.youtube.com/watch?v=pCK6prSq8aw)
+- **ER Diagram Part 1**: [https://www.youtube.com/watch?v=xsg9BDiwiJE](https://www.youtube.com/watch?v=xsg9BDiwiJE)
+- **ER Diagram Part 2**: [https://www.youtube.com/watch?v=hktyW5Lp0Vo](https://www.youtube.com/watch?v=hktyW5Lp0Vo)
 
 ----
 <br><br>
