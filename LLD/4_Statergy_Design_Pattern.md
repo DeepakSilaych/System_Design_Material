@@ -1,13 +1,11 @@
-# Strategy Design Pattern Interview Questions
+# Strategy Design Pattern
 
-### Articles
 - **Refactoring Guru – Strategy Pattern**: [https://refactoring.guru/design-patterns/strategy](https://refactoring.guru/design-patterns/strategy)
 
-### Videos
-- **Strategy Pattern in Python (English)**: [https://www.youtube.com/watch?v=PpKvPrl_gRg](https://www.youtube.com/watch?v=PpKvPrl_gRg)
+- **Strategy Pattern in Python (Hindi)**: [https://www.youtube.com/watch?v=PpKvPrl_gRg](https://www.youtube.com/watch?v=PpKvPrl_gRg)
 
----
-<br><br>
+----
+
 ## Revision Questions
 
 ### 1. What is the Strategy Design Pattern?
