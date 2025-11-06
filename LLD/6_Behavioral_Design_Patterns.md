@@ -1,12 +1,16 @@
-# Strategy Design Pattern
+# Behavioral Design Patterns
+
+Behavioral design patterns are concerned with algorithms and the assignment of responsibilities between objects.
+
+---
+
+## Strategy Pattern
 
 - **Refactoring Guru – Strategy Pattern**: [https://refactoring.guru/design-patterns/strategy](https://refactoring.guru/design-patterns/strategy)
 
 - **Strategy Pattern in Python (Hindi)**: [https://www.youtube.com/watch?v=PpKvPrl_gRg](https://www.youtube.com/watch?v=PpKvPrl_gRg)
 
 ----
-
-## Revision Questions
 
 ### 1. What is the Strategy Design Pattern?
 > **Define a family of algorithms, encapsulate each one, and make them interchangeable.**
@@ -145,7 +149,7 @@ order.pay()  # Paying $100.00 using Bitcoin.
 
 ---
 
-### 6. Strategy vs State Pattern – What’s the difference?
+### 6. Strategy vs State Pattern – What's the difference?
 
 | Feature | Strategy | State |
 |-------|----------|-------|
@@ -311,3 +315,4 @@ order.pay()
 **Strategy Pattern = Plug-and-play algorithms.**  
 Use it when you want **behavior to be configurable**, **extensible**, and **clean**.  
 In Python, combine with **functions or ABCs** depending on complexity.
+
