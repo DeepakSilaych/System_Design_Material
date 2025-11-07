@@ -14,6 +14,9 @@ Creational design patterns focus on object creation mechanisms, helping to make 
 4. **Prototype** - Creates new objects by cloning existing instances, useful when object creation is expensive
 5. **Singleton** - Ensures a class has only one instance and provides global access to it
 
+One-shot : [https://www.youtube.com/watch?v=OuNOyFg942M](https://www.youtube.com/watch?v=OuNOyFg942M)
+
+
 ---
 
 ## 1. Factory Method Pattern
