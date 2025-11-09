@@ -1,318 +1,112 @@
 # Behavioral Design Patterns
 
-Behavioral design patterns are concerned with algorithms and the assignment of responsibilities between objects.
+Behavioral design patterns focus on the interactions and communication between objects, defining how they collaborate and distribute responsibilities.
+
+**One Shot Video**: [Behavioral Design Patterns in One Shot](https://www.youtube.com/watch?v=DBDnUkTobaE)
+
+## Summary
+
+Behavioral design patterns focus on the communication and interaction between objects, defining how they collaborate to achieve specific tasks. These patterns help in managing complex control flows and responsibilities among objects.
+
+### Overview of Behavioral Patterns
+
+1. **Chain of Responsibility** - Allows a request to pass through a chain of handlers, where each handler decides either to process the request or pass it to the next handler
+2. **Command** - Encapsulates a request as an object, allowing for parameterization of clients with different requests
+3. **Interpreter** - Defines a grammatical representation for a language and provides an interpreter to deal with this grammar
+4. **Mediator** - Defines an object that encapsulates how a set of objects interact, promoting loose coupling
+5. **Memento** - Captures and externalizes an object's internal state so that it can be restored later
+6. **Observer** - Establishes a one-to-many dependency between objects so that when one object changes state, all its dependents are notified
+7. **State** - Allows an object to alter its behavior when its internal state changes
+8. **Strategy** - Defines a family of algorithms, encapsulates each one, and makes them interchangeable
+9. **Template Method** - Defines the skeleton of an algorithm in the superclass but lets subclasses override specific steps
+10. **Visitor** - Represents an operation to be performed on elements of an object structure
 
 ---
 
-## Strategy Pattern
+## 1. Chain of Responsibility Pattern
 
-- **Refactoring Guru – Strategy Pattern**: [https://refactoring.guru/design-patterns/strategy](https://refactoring.guru/design-patterns/strategy)
+- **GeeksforGeeks**: [Chain of Responsibility Design Pattern](https://www.geeksforgeeks.org/system-design/chain-responsibility-design-pattern/)
+- **Chain of Responsibility Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
 
-- **Strategy Pattern in Python (Hindi)**: [https://www.youtube.com/watch?v=PpKvPrl_gRg](https://www.youtube.com/watch?v=PpKvPrl_gRg)
-
-----
-
-### 1. What is the Strategy Design Pattern?
-> **Define a family of algorithms, encapsulate each one, and make them interchangeable.**
-
-The **Strategy pattern** lets you:
-- Define a set of algorithms (behaviors)
-- Put each in its own class
-- Switch between them at **runtime**
-
-It promotes **"favor composition over inheritance"** and enables **flexible, reusable code**.
+> **Avoid coupling the sender of a request to its receiver by giving more than one object a chance to handle the request. Chain the receiving objects and pass the request along the chain until an object handles it.**
 
 ---
 
-### 2. Why use the Strategy Pattern?
-| Benefit | Explanation |
-|-------|-------------|
-| **Open/Closed Principle** | Add new strategies without changing existing code |
-| **Replace Inheritance** | Avoid deep inheritance trees |
-| **Runtime Flexibility** | Change behavior dynamically |
-| **Testability** | Easy to mock or test individual strategies |
-| **Cleaner Code** | Logic is separated into focused classes |
+## 2. Command Pattern
+
+- **GeeksforGeeks**: [Command Design Pattern](https://www.geeksforgeeks.org/system-design/command-design-pattern/)
+- **Command Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
+
+> **Encapsulate a request as an object, thereby letting you parameterize clients with different requests, queue or log requests, and support undoable operations.**
 
 ---
 
-### 3. When should you use Strategy Pattern?
+## 3. Interpreter Pattern
 
-Use it when:
-- You have **multiple ways** to perform a task
-- You want to **switch behavior at runtime**
-- You want to **avoid conditional statements** (if/else chains)
-- Algorithms vary **independently** from the client
+- **GeeksforGeeks**: [Interpreter Design Pattern](https://www.geeksforgeeks.org/system-design/interpreter-design-pattern/)
+- **Interpreter Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
 
-#### Real-Life Example:
-A **navigation app** can route via:
-- Car
-- Bike
-- Walking
-- Public Transit
-
-Each is a **strategy** — user picks one at runtime.
+> **Given a language, define a representation for its grammar along with an interpreter that uses the representation to interpret sentences in the language.**
 
 ---
 
-### 4. Structure of Strategy Pattern
+## 4. Mediator Pattern
 
-```text
-Context
-   └── Strategy (interface)
-         ├── ConcreteStrategyA
-         ├── ConcreteStrategyB
-         └── ConcreteStrategyC
-```
+- **GeeksforGeeks**: [Mediator Design Pattern](https://www.geeksforgeeks.org/system-design/mediator-design-pattern/)
+- **Mediator Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
 
-- **Context**: Uses a strategy
-- **Strategy**: Interface for all algorithms
-- **Concrete Strategies**: Implement the algorithm
+> **Define an object that encapsulates how a set of objects interact. Mediator promotes loose coupling by keeping objects from referring to each other explicitly.**
 
 ---
 
-### 5. Python Example: Payment Processing
+## 5. Memento Pattern
 
-#### Bad Way (Without Strategy)
-```python
-class Order:
-    def __init__(self, total):
-        self.total = total
+- **GeeksforGeeks**: [Memento Design Pattern](https://www.geeksforgeeks.org/system-design/memento-design-pattern/)
+- **Memento Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
 
-    def pay(self, payment_type):
-        if payment_type == "credit":
-            print(f"Paying {self.total} using Credit Card.")
-        elif payment_type == "paypal":
-            print(f"Paying {self.total} using PayPal.")
-        elif payment_type == "crypto":
-            print(f"Paying {self.total} using Bitcoin.")
-        else:
-            raise ValueError("Unknown payment method")
-```
-
-Problem: New payment → modify `pay()` → **violates OCP**
+> **Without violating encapsulation, capture and externalize an object's internal state so that the object can be restored to this state later.**
 
 ---
 
-#### Good Way (With Strategy Pattern)
+## 6. Observer Pattern
 
-```python
-from abc import ABC, abstractmethod
+- **GeeksforGeeks**: [Observer Design Pattern](https://www.geeksforgeeks.org/system-design/observer-design-pattern/)
+- **Observer Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
 
-# Strategy Interface
-class PaymentStrategy(ABC):
-    @abstractmethod
-    def pay(self, amount: float):
-        pass
-
-# Concrete Strategies
-class CreditCardPayment(PaymentStrategy):
-    def pay(self, amount: float):
-        print(f"Paying ${amount:.2f} using Credit Card.")
-
-class PayPalPayment(PaymentStrategy):
-    def pay(self, amount: float):
-        print(f"Paying ${amount:.2f} using PayPal.")
-
-class BitcoinPayment(PaymentStrategy):
-    def pay(self, amount: float):
-        print(f"Paying ${amount:.2f} using Bitcoin.")
-
-# Context
-class Order:
-    def __init__(self, total: float):
-        self.total = total
-        self.payment_strategy = None
-
-    def set_payment_strategy(self, strategy: PaymentStrategy):
-        self.payment_strategy = strategy
-
-    def pay(self):
-        if not self.payment_strategy:
-            raise ValueError("Payment strategy not set!")
-        self.payment_strategy.pay(self.total)
-```
-
-#### Usage:
-```python
-order = Order(100.0)
-
-# Switch strategies at runtime
-order.set_payment_strategy(CreditCardPayment())
-order.pay()  # Paying $100.00 using Credit Card.
-
-order.set_payment_strategy(PayPalPayment())
-order.pay()  # Paying $100.00 using PayPal.
-
-order.set_payment_strategy(BitcoinPayment())
-order.pay()  # Paying $100.00 using Bitcoin.
-```
+> **Define a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically.**
 
 ---
 
-### 6. Strategy vs State Pattern – What's the difference?
+## 7. State Pattern
 
-| Feature | Strategy | State |
-|-------|----------|-------|
-| **Purpose** | Change **algorithm** | Change **object behavior** based on internal state |
-| **When to change** | Client decides | Object changes itself |
-| **Example** | Sorting: Quick vs Merge | Traffic Light: Red → Green → Yellow |
+- **GeeksforGeeks**: [State Design Pattern](https://www.geeksforgeeks.org/system-design/state-design-pattern/)
+- **State Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=bJPmvie_p4)
 
----
-
-### 7. Can Strategy be used with Dependency Injection?
-
-**Yes!** It's perfect for DI.
-
-```python
-class ShoppingCart:
-    def __init__(self, payment_strategy: PaymentStrategy):
-        self.payment_strategy = payment_strategy
-        self.items = []
-
-    def checkout(self, total):
-        self.payment_strategy.pay(total)
-```
-
-Now inject strategy via constructor:
-```python
-cart = ShoppingCart(PayPalPayment())
-cart.checkout(99.99)
-```
+> **Allow an object to alter its behavior when its internal state changes. The object will appear to change its class.**
 
 ---
 
-### 8. Real-World Analogy
+## 8. Strategy Pattern
 
-| Component | Real Life |
-|---------|----------|
-| **Context** | A **chef** |
-| **Strategy** | Cooking style: Grill, Bake, Fry |
-| **Concrete Strategy** | `GrillStrategy`, `BakeStrategy` |
-| **Switching** | Chef picks method based on dish |
+- **GeeksforGeeks**: [Strategy Pattern](https://www.geeksforgeeks.org/system-design/strategy-pattern-set-1/)
+- **Strategy Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
+
+> **Define a family of algorithms, encapsulate each one, and make them interchangeable. Strategy lets the algorithm vary independently from clients that use it.**
 
 ---
 
-### 9. Common Interview Question: "Refactor this code using Strategy"
+## 9. Template Method Pattern
 
-#### Before (if-else hell):
-```python
-def compress_file(file, method):
-    if method == "zip":
-        print("Compressing with ZIP")
-    elif method == "rar":
-        print("Compressing with RAR")
-    elif method == "7z":
-        print("Compressing with 7Z")
-```
+- **GeeksforGeeks**: [Template Method Design Pattern](https://www.geeksforgeeks.org/system-design/template-method-design-pattern/)
+- **Template Method Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
 
-#### After (Strategy):
-```python
-from abc import ABC, abstractmethod
-
-class CompressionStrategy(ABC):
-    @abstractmethod
-    def compress(self, file):
-        pass
-
-class ZipCompression(CompressionStrategy):
-    def compress(self, file):
-        print(f"Compressing {file} using ZIP")
-
-class RarCompression(CompressionStrategy):
-    def compress(self, file):
-        print(f"Compressing {file} using RAR")
-
-class Compressor:
-    def __init__(self, strategy: CompressionStrategy):
-        self.strategy = strategy
-
-    def compress(self, file):
-        self.strategy.compress(file)
-
-# Usage
-compressor = Compressor(ZipCompression())
-compressor.compress("data.txt")
-```
+> **Define the skeleton of an algorithm in an operation, deferring some steps to subclasses. Template Method lets subclasses redefine certain steps of an algorithm without changing the algorithm's structure.**
 
 ---
 
-### 10. Advantages of Strategy Pattern
+## 10. Visitor Pattern
 
-| Advantage | Description |
-|----------|-------------|
-| **Eliminates conditionals** | No `if-elif` chains |
-| **Reusable algorithms** | Use same strategy in multiple contexts |
-| **Easy to test** | Test strategies in isolation |
-| **Runtime switching** | Change behavior without restarting |
+- **GeeksforGeeks**: [Visitor Design Pattern](https://www.geeksforgeeks.org/system-design/visitor-design-pattern/)
+- **Visitor Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
 
----
-
-### 11. Disadvantages
-
-| Drawback | Explanation |
-|---------|-------------|
-| **More classes** | Can increase class count |
-| **Client must know strategies** | Sometimes exposes implementation |
-| **Overhead for simple cases** | Not worth it for 1–2 algorithms |
-
----
-
-### 12. Strategy in Python: Idiomatic Way (Using Functions)
-
-Python allows **first-class functions**, so you can simplify:
-
-```python
-def pay_credit(amount):
-    print(f"Paying ${amount} via Credit Card")
-
-def pay_paypal(amount):
-    print(f"Paying ${amount} via PayPal")
-
-class Order:
-    def __init__(self, total):
-        self.total = total
-        self.pay_func = None
-
-    def set_payment(self, func):
-        self.pay_func = func
-
-    def pay(self):
-        self.pay_func(self.total)
-
-# Usage
-order = Order(50)
-order.set_payment(pay_paypal)
-order.pay()
-```
-
-**Best for simple cases** — no need for full classes.
-
----
-
-### 13. UML Diagram (Text Version)
-
-```text
-+----------------+          +--------------------+
-|    Context     |<>------->|     Strategy       |
-+----------------+ 1     1  +--------------------+
-| - strategy     |          | + execute()        |
-+----------------+          +--------------------+
-| + execute()    |                /\_/\
-+----------------+                 / \
-                                   |
-             +---------------------+--------------------+
-             |                     |                    |
-    +----------------+    +----------------+    +----------------+
-    | ConcreteStratA |    | ConcreteStratB |    | ConcreteStratC |
-    +----------------+    +----------------+    +----------------+
-    | + execute()    |    | + execute()    |    | + execute()    |
-    +----------------+    +----------------+    +----------------+
-```
-
----
-
-**Summary**:  
-**Strategy Pattern = Plug-and-play algorithms.**  
-Use it when you want **behavior to be configurable**, **extensible**, and **clean**.  
-In Python, combine with **functions or ABCs** depending on complexity.
-
+> **Represent an operation to be performed on the elements of an object structure. Visitor lets you define a new operation without changing the classes of the elements on which it operates.**
