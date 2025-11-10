@@ -16,7 +16,6 @@ Creational design patterns focus on object creation mechanisms, helping to make 
 
 One-shot : [https://www.youtube.com/watch?v=OuNOyFg942M](https://www.youtube.com/watch?v=OuNOyFg942M)
 
-
 ---
 
 ## 1. Factory Method Pattern
@@ -33,7 +32,7 @@ One-shot : [https://www.youtube.com/watch?v=OuNOyFg942M](https://www.youtube.com
 
 - **GeeksforGeeks**: [Abstract Factory Pattern](https://www.geeksforgeeks.org/system-design/abstract-factory-pattern/)
 - **Refactoring Guru**: [Abstract Factory](https://sourcemaking.com/design_patterns/abstract_factory)
-- **Abstract Factory in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
+- **Abstract Factory in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=dMK4TbG29fk)
 
 > **Provide an interface for creating families of related or dependent objects without specifying their concrete classes.**
 
@@ -43,7 +42,7 @@ One-shot : [https://www.youtube.com/watch?v=OuNOyFg942M](https://www.youtube.com
 
 - **GeeksforGeeks**: [Builder Design Pattern](https://www.geeksforgeeks.org/system-design/builder-design-pattern/)
 - **Refactoring Guru**: [Builder Pattern](https://refactoring.guru/design-patterns/builder)
-- **Builder Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
+- **Builder Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=G4Ntl9KzIxY)
 
 > **Separate the construction of a complex object from its representation so that the same construction process can create different representations.**
 
@@ -53,7 +52,7 @@ One-shot : [https://www.youtube.com/watch?v=OuNOyFg942M](https://www.youtube.com
 
 - **GeeksforGeeks**: [Prototype Design Pattern](https://www.geeksforgeeks.org/system-design/prototype-design-pattern/)
 - **Refactoring Guru**: [Prototype Pattern](https://refactoring.guru/design-patterns/prototype)
-- **Prototype Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
+- **Prototype Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=KMQFNV8LFec)
 
 > **Specify the kinds of objects to create using a prototypical instance, and create new objects by copying this prototype.**
 
@@ -63,6 +62,6 @@ One-shot : [https://www.youtube.com/watch?v=OuNOyFg942M](https://www.youtube.com
 
 - **GeeksforGeeks**: [Singleton Design Pattern](https://www.geeksforgeeks.org/system-design/singleton-design-pattern-introduction/)
 - **Refactoring Guru**: [Singleton Pattern](https://refactoring.guru/design-patterns/singleton)
-- **Youtube - Singleton Pattern**: [YouTube](https://www.youtube.com/watch?v=tSZn4wkBIu8)
+- **Youtube - Singleton Pattern**: [YouTube](https://www.youtube.com/watch?v=CD3meit-WDc)
 
 > **Ensure a class has only one instance and provide a global point of access to it.**

@@ -14,16 +14,26 @@ Design an Online Food Delivery Service Like Swiggy
 8. The system should provide real-time notifications to customers, restaurants, and delivery agents.
 
 ## Solution
-### Approach and Principles
-The reference design models the domain with cohesive classes that each own a clear responsibility.
-Interactions between components are mediated through well-defined interfaces, aligning with SOLID
-principles.
+### Design overview
+Orchestrate the end-to-end flow: discover → place order → restaurant confirmation → assignment →
+pickup → delivery → settlement. Keep dispatch (assignment) latency low; decouple notifications and
+ETA calculation via async events.
 
-Singleton collaborators are used where a single coordinating instance (for example managers or
-processors) simplifies shared-state management across the system.
+- Restaurant and courier availability indexed by location.
+- Dispatch strategy considers distance, agent load, SLA, and batching windows.
+- Payments captured at order time with split-settlement to restaurant and platform.
+- Real-time updates via pub/sub (customer, restaurant, courier apps).
 
-Key components include: Customer, Restaurant, MenuItem, Order, OrderItem, OrderStatus,
-DeliveryAgent, FoodDeliveryService.
+### Core model
+- `Customer`, `Restaurant` (menus), `MenuItem`
+- `Order`, `OrderItem`, `OrderStatus`
+- `DeliveryAgent` (availability, location)
+- `FoodDeliveryService` façade; dispatch, pricing, and notification subsystems
+
+### Key flows
+1. Browse/search restaurants by proximity and cuisine
+2. Place order → authorize payment → restaurant accepts → dispatch assigns agent
+3. Agent picks up → marks in-transit → delivers → capture/settle payment and close order
 
 ### Design Details
 1. The **Customer** class represents a customer who can place orders. It contains customer details such as ID, name, email, and phone number.

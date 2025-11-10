@@ -12,13 +12,27 @@ Design a Logging Framework
 6. It should be extensible to accommodate new log levels and output destinations in the future.
 
 ## Solution
-### Approach and Principles
-The reference design models the domain with cohesive classes that each own a clear responsibility.
-Interactions between components are mediated through well-defined interfaces, aligning with SOLID
-principles.
+### Design overview
+Aim for low-latency, non-blocking logging with hierarchical loggers and pluggable appenders. Execution
+path: create `LogMessage` → enqueue to async processor → fan-out to appenders → formatter renders.
 
-Key components include: LogLevel, LogMessage, LogAppender, ConsoleAppender, FileAppender,
-DatabaseAppender, LoggerConfig, Logger, LoggingExample.
+- Logger hierarchy inherits effective levels and appenders with optional additivity control.
+- Async processing (single-threaded or bounded thread pool) decouples application threads from I/O.
+- Appenders own their I/O and are isolated behind an interface; formatters are swappable.
+
+### Core model
+- `LogLevel`, `LogMessage`
+- `Logger` (name hierarchy, level resolution, additivity, appenders)
+- `LogAppender` (`ConsoleAppender`, `FileAppender`, + extensible)
+- `LogFormatter` (`SimpleTextFormatter`, + custom)
+- `AsyncLogProcessor` (submit-only, graceful shutdown)
+- `LogManager` (singleton factory for loggers and the processor)
+
+### Key flows
+1. Acquire logger from `LogManager`
+2. Log call checks effective level → builds `LogMessage`
+3. Message pushed to `AsyncLogProcessor` and delivered to all appenders attached to the logger and its ancestors (if additivity enabled)
+4. Shutdown drains and closes appenders
 
 ### Design Details
 1. The **LogLevel** enum defines the different log levels supported by the logging framework.

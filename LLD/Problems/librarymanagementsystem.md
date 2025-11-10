@@ -14,15 +14,27 @@ Design a Library Management System
 8. The system should be extensible to accommodate future enhancements and new features.
 
 ## Solution
-### Approach and Principles
-The reference design models the domain with cohesive classes that each own a clear responsibility.
-Interactions between components are mediated through well-defined interfaces, aligning with SOLID
-principles.
+### Design overview
+The design treats each physical copy as the unit of circulation (not the title). State transitions on
+copies are guarded; holds and notifications are implemented using the Observer pattern.
 
-Singleton collaborators are used where a single coordinating instance (for example managers or
-processors) simplifies shared-state management across the system.
+- Factory builds items (books, magazines) behind a single API.
+- Strategy provides pluggable search.
+- Circulation is tracked by a `TransactionService` and copy-level state machine.
 
-Key components include: Book, Member, LibraryManager, LibraryManagementSystemDemo.
+### Core model
+- `LibraryItem` (abstract) with `Book`, `Magazine` (+ `ItemFactory`)
+- `BookCopy` (Available → CheckedOut → OnHold)
+- `Member` (observer for holds)
+- `LibraryManagementSystem` (facade for catalog, members, circulation)
+- `TransactionService` (active loans)
+- `SearchStrategy` variants
+
+### Key flows
+1. Add item(s) and create physical copies
+2. Checkout → create loan and transition to `CheckedOut`
+3. Return → transition to `Available` or `OnHold` if waiters exist, then notify observers
+4. Holds → members subscribe as observers and are notified on availability
 
 ### Design Details
 1. The **Book** class represents a book in the library catalog, with properties such as ISBN, title, author, publication year, and availability status.

@@ -14,16 +14,27 @@ Design a Movie Ticket Booking System like BookMyShow
 8. The system should be scalable to handle a large number of concurrent users and bookings.
 
 ## Solution
-### Approach and Principles
-The reference design models the domain with cohesive classes that each own a clear responsibility.
-Interactions between components are mediated through well-defined interfaces, aligning with SOLID
-principles.
+### Design overview
+The booking flow is: discover shows → lock seats atomically → pay → confirm booking → release locks.
+Seat allocation must be concurrency-safe and time-bound (locks expire).
 
-Singleton collaborators are used where a single coordinating instance (for example managers or
-processors) simplifies shared-state management across the system.
+- Per-show locking prevents cross-show contention and narrows the critical section.
+- Pricing via a strategy lets us vary rules (weekday/weekend).
+- Observer on `Movie` supports user subscriptions/notifications.
 
-Key components include: Movie, Theater, Show, Seat, SeatType, SeatStatus, Booking, BookingStatus,
-User, MovieTicketBookingSystem, MovieTicketBookingDemo.
+### Core model
+- `Movie`, `City`, `Cinema`, `Screen`, `Show`
+- `Seat` (`AVAILABLE` → `LOCKED` → `BOOKED`)
+- `SeatLockManager` (time-bound locks)
+- `BookingManager` (orchestrates lock → pay → confirm → unlock)
+- `PaymentStrategy` variants; `Payment` outcome
+- `MovieBookingService` façade and `MovieBookingDemo`
+
+### Key flows
+1. Search shows by city and movie
+2. Lock seats (reject if any requested seat is unavailable)
+3. Compute price via strategy and process payment
+4. Confirm booking (mark seats booked) and release locks
 
 ### Design Details
 1. The **Movie** class represents a movie with properties such as ID, title, description, and duration.

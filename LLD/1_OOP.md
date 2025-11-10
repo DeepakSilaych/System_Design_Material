@@ -10,8 +10,8 @@
 ### Videos
 
 #### Hindi
-- **Part 1 | Abstraction and Encapsulation**: [https://www.youtube.com/watch?v=QbGoqAgP_zg&list=PLQEaRBV9gAFvzp6XhcNFpk1WdOcyVo9qT](https://www.youtube.com/watch?v=QbGoqAgP_zg&list=PLQEaRBV9gAFvzp6XhcNFpk1WdOcyVo9qT)
-- **Part 2 | Inheritance and Polymorphism**: [https://www.youtube.com/watch?v=KGOEK0-XBIg&list=PLQEaRBV9gAFvzp6XhcNFpk1WdOcyVo9qT&index=3](https://www.youtube.com/watch?v=KGOEK0-XBIg&list=PLQEaRBV9gAFvzp6XhcNFpk1WdOcyVo9qT&index=3)
+- **Part 1 | Abstraction and Encapsulation**: [https://www.youtube.com/watch?v=QbGoqAgP_zg](https://www.youtube.com/watch?v=QbGoqAgP_zg)
+- **Part 2 | Inheritance and Polymorphism**: [https://www.youtube.com/watch?v=KGOEK0-XBIg](https://www.youtube.com/watch?v=KGOEK0-XBIg)
 
 #### English
 - **One-shot**: [https://www.youtube.com/watch?v=SiBw7os-_zI](https://www.youtube.com/watch?v=SiBw7os-_zI)

@@ -14,16 +14,26 @@ Design a Digital Wallet System
 8. The system should be scalable to handle a large number of users and transactions.
 
 ## Solution
-### Approach and Principles
-The reference design models the domain with cohesive classes that each own a clear responsibility.
-Interactions between components are mediated through well-defined interfaces, aligning with SOLID
-principles.
+### Design overview
+A wallet is an accounts-and-ledgers system with strong consistency for balance mutations and
+idempotent money-movement APIs. Execution order is: authenticate → validate → reserve → post →
+persist transaction → emit events.
 
-Singleton collaborators are used where a single coordinating instance (for example managers or
-processors) simplifies shared-state management across the system.
+- Ledger-centric design: every balance change has a durable `Transaction`.
+- Currency conversion via strategy (or external FX oracle) to avoid coupling.
+- Idempotency keys on transfer to prevent double posting on retries.
+- Payment methods behind an abstraction; PCI-sensitive data tokenized elsewhere.
 
-Key components include: User, Account, Transaction, PaymentMethod, CreditCard, BankAccount,
-Currency, CurrencyConverter, DigitalWallet, DigitalWalletDemo.
+### Core model
+- `User`, `Account` (currency, balance), `Transaction` (source, destination, amount, currency, time)
+- `PaymentMethod` abstractions (`CreditCard`, `BankAccount`)
+- `Currency`, `CurrencyConverter`
+- `DigitalWallet` façade for user/account management, deposits/withdrawals/transfers, statements
+
+### Key flows
+1. Deposit/Withdraw: validate method → process via provider → post to account ledger
+2. Transfer: verify ownership/limits → (optional) convert FX → atomic debit/credit → record `Transaction`
+3. Statement: read-only range queries over an account’s transactions
 
 ### Design Details
 1. The **User** class represents a user of the digital wallet, with properties such as ID, name, email, password, and a list of accounts.

@@ -13,12 +13,21 @@ Design an Elevator System
 7. The system should ensure thread safety and prevent race conditions when multiple threads interact with the elevators.
 
 ## Solution
-### Approach and Principles
-The reference design models the domain with cohesive classes that each own a clear responsibility.
-Interactions between components are mediated through well-defined interfaces, aligning with SOLID
-principles.
+### Design overview
+Dispatch strategy is the heart: assign the best elevator to a hall-call based on proximity, direction,
+and load; then merge car-calls to minimize travel (look-ahead/SCAN). Execution: intake request →
+assign elevator → enqueue stops → run controller loop per elevator.
 
-Key components include: Direction, Request, Elevator, ElevatorController, ElevatorSystem.
+### Core model
+- `Direction`, `Request` (hall vs car calls)
+- `Elevator` (current floor, direction, stop sets/queues, state)
+- `ElevatorController` (assignment policy, fan-out)
+- Observer and state classes to keep elevator loop simple and testable
+
+### Key flows
+1. Hall call intake (source, direction) → controller chooses elevator (nearest idle or matching direction ahead)
+2. Car call (destination) added to elevator’s queue
+3. Elevator loop: move one floor, open/close, board/alight, recompute next stops
 
 ### Design Details
 1. The **Direction** enum represents the possible directions of elevator movement (UP or DOWN).

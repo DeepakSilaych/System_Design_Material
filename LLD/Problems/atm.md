@@ -12,12 +12,22 @@ Design an ATM System
 6. The ATM should have a user-friendly interface for users to interact with.
 
 ## Solution
-### Approach and Principles
-The reference design models the domain with cohesive classes that each own a clear responsibility.
-Interactions between components are mediated through well-defined interfaces, aligning with SOLID
-principles.
+### Design overview
+Execution flow: authenticate (card+PIN) → select operation → validate and post transaction via bank
+backend → dispense/accept cash → print receipt. Treat cash-in and cash-out as posted transactions
+against the bank’s authoritative ledger; the ATM is stateless beyond session and cash cassettes.
 
-Key components include: Card, Account, Transaction, BankingService, CashDispenser, ATM, ATMDriver.
+### Core model
+- `Card`, `Account`, `Transaction` (`Withdrawal`, `Deposit`, `BalanceInquiry`)
+- `BankingService` (authoritative balances and posting with concurrency control)
+- `CashDispenser` (thread-safe cash out; cassette inventory)
+- `ATM` session/controller; `ATMDriver` demo
+
+### Key flows
+1. Auth: validate card + PIN against `BankingService`
+2. Withdrawal: pre-auth funds → post debit → dispense cash → receipt
+3. Deposit: accept envelope/notes → credit after validation (may be delayed)
+4. Balance: read-only inquiry from bank backend
 
 ### Design Details
 1. The **Card** class represents an ATM card with a card number and PIN.

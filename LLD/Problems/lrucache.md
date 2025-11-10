@@ -12,12 +12,18 @@ Design a LRU Cache
 4. The cache should be efficient in terms of time complexity for both put and get operations, ideally O(1).
 
 ## Solution
-### Approach and Principles
-The reference design models the domain with cohesive classes that each own a clear responsibility.
-Interactions between components are mediated through well-defined interfaces, aligning with SOLID
-principles.
+### Design overview
+Use a hash map for O(1) lookup and a doubly linked list for O(1) recency updates/evictions. The
+execution order is: read/write → adjust DLL nodes → evict tail when at capacity.
 
-Key components include: Node, LRUCache, LRUCacheDemo.
+### Core model
+- `Node` (key, value, prev, next)
+- `DoublyLinkedList` with sentinel `head`/`tail` and operations: `add_first`, `remove`, `move_to_front`, `remove_last`
+- `LRUCache` (capacity, map, dll, lock)
+
+### Key flows
+1. `get(k)`: lookup map → if hit, move node to head → return value; else return None
+2. `put(k,v)`: if key exists → update and move to head; else evict tail when full, then insert new at head
 
 ### Design Details
 1. The **Node** class represents a node in the doubly linked list, containing the key, value, and references to the previous and next nodes.

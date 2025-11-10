@@ -14,13 +14,30 @@ Design a Chess Game
 8. The game should provide a user interface for players to interact with the game.
 
 ## Solution
-### Approach and Principles
-The reference design models the domain with cohesive classes that each own a clear responsibility.
-Interactions between components are mediated through well-defined interfaces, aligning with SOLID
-principles.
+### Design overview
+The model is organized to mirror how a chess game executes: the domain pieces and board first, then
+player interaction, then the game loop.
 
-Key components include: Piece, King, Queen, Rook, Bishop, Knight, Pawn, Board, Player, Game,
-ChessGame.
+- Keep movement logic local to each piece (SRP).
+- Centralize board validation (in-bounds, destination occupancy, check/stalemate detection).
+- Have the `Game` orchestrate turns and end-conditions, not low-level movement.
+
+### Core model
+- `Piece` (abstract) with concrete `King`, `Queen`, `Rook`, `Bishop`, `Knight`, `Pawn`
+- `Board` (8x8 matrix, placement, move validation, end-state queries)
+- `Move` (value object capturing intent)
+- `Player` (selects and applies a `Move`)
+- `Game` (turns, input/output, termination)
+
+### Key flows
+1. Input → `Move` creation
+2. Validation → `Board.is_valid_move` delegates the pattern-specific rule to the concrete `Piece`
+3. Apply move → `Player.make_move` commits source/destination changes on the `Board`
+4. End check → `Game` queries board for checkmate/stalemate
+
+### Recommended code reading order
+1) `color.py`, 2) `piece.py`, 3) concrete pieces (`king.py`, `queen.py`, `rook.py`, `bishop.py`, `knight.py`, `pawn.py`),  
+4) `move.py`, 5) `board.py`, 6) `player.py`, 7) `game.py`, 8) demo.
 
 ### Design Details
 1. The **Piece** class is an abstract base class representing a chess piece. It contains common attributes such as color, row, and column, and declares an abstract method canMove to be implemented by each specific piece class.

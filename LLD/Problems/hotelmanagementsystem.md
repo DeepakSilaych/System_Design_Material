@@ -14,16 +14,28 @@ Design a Hotel Management System
 8. The system should be scalable and handle a large number of rooms and guests.
 
 ## Solution
-### Approach and Principles
-The reference design models the domain with cohesive classes that each own a clear responsibility.
-Interactions between components are mediated through well-defined interfaces, aligning with SOLID
-principles.
+### Design overview
+Execution follows the guest journey: search → reserve (guarantee/hold) → check-in → stay →
+check-out/billing. Keep availability checks fast and race-safe with atomic status transitions and
+date-range conflict checks.
 
-Singleton collaborators are used where a single coordinating instance (for example managers or
-processors) simplifies shared-state management across the system.
+- Separate inventory (rooms, types) from booking state.
+- Use a small state machine for reservation status (PENDING → CONFIRMED → CHECKED_IN → CHECKED_OUT/CANCELLED).
+- Payments behind strategy to support cash/card/online, and captured at check-in or check-out per policy.
 
-Key components include: Guest, Room, RoomType, RoomStatus, Reservation, ReservationStatus, Payment,
-HotelManagementSystem, HotelManagementSystemDemo.
+### Core model
+- `Room` (id, type, price, status), `RoomType`
+- `Guest` (id, identity, contacts)
+- `Reservation` (id, guest, room, check-in/out dates, status)
+- `AvailabilityService` (find free rooms for a date range)
+- `ReservationService` (create/cancel/modify, check-in/out)
+- `PaymentStrategy` variants
+
+### Key flows
+1. Search: filter rooms by type, price band, and ensure no overlapping confirmed reservations
+2. Reserve: hold/confirm a room, optionally with pre-auth
+3. Check-in: transition to occupied; start folio
+4. Check-out: compute charges, capture payment, release room to available
 
 ### Design Details
 1. The **Guest** class represents a guest of the hotel, with properties such as ID, name, email, and phone number.
@@ -37,4 +49,4 @@ HotelManagementSystem, HotelManagementSystemDemo.
 9. The **HotelManagementSystemDemo** class demonstrates the usage of the hotel management system by creating guests, rooms, booking a room, checking in, checking out, and cancelling a reservation.
 
 ### Implementation (Python)
-_No Python implementation files found in the source repository._
+_Outline only (replace with repositories and integration as needed)._

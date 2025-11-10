@@ -14,248 +14,339 @@ Design a Car Rental System
 8. The system should be able to handle concurrent reservations and ensure data consistency.
 
 ## Solution
-### Approach and Principles
-The reference design models the domain with cohesive classes that each own a clear responsibility.
-Interactions between components are mediated through well-defined interfaces, aligning with SOLID
-principles.
+### Design overview
+The refactored design keeps the model small but expressive and orders the components the same way the
+business flow executes:
 
-Singleton collaborators are used where a single coordinating instance (for example managers or
-processors) simplifies shared-state management across the system.
+1. **Catalogue** – describe the fleet and expose search capabilities.
+2. **Reservation lifecycle** – block a vehicle for a date range, release it, and capture payment.
+3. **Facade** – orchestrate the user journey (search → reserve → pay) and expose a cohesive API to
+   UI or automation clients.
 
-Key components include: Car, Customer, Reservation, PaymentProcessor, RentalSystem, RentalSystem,
-CarRentalSystem.
+The code favours simple, immutable data structures where possible, delegates policy-specific logic to
+strategy interfaces (for payment), and validates dates and availability before mutating any shared
+state.  Responsibilities are kept small to preserve the SRP, and collaborators are injected rather
+than hidden behind singletons so that the design is testable.
 
-### Design Details
-1. The **Car** class represents a car in the rental system, with properties such as make, model, year, license plate number, rental price per day, and availability status.
-2. The **Customer** class represents a customer, with properties like name, contact information, and driver's license number.
-3. The **Reservation** class represents a reservation made by a customer for a specific car and date range. It includes properties such as reservation ID, customer, car, start date, end date, and total price.
-4. The **PaymentProcessor** interface defines the contract for payment processing, and the CreditCardPaymentProcessor and PayPalPaymentProcessor classes are concrete implementations of the payment processor.
-5. The **RentalSystem** class is the core of the car rental system and follows the Singleton pattern to ensure a single instance of the rental system.
-6. The RentalSystem class uses concurrent data structures (ConcurrentHashMap) to handle concurrent access to cars and reservations.
-7. The **RentalSystem** class provides methods for adding and removing cars, searching for available cars based on criteria, making reservations, canceling reservations, and processing payments.
-8. The **CarRentalSystem** class serves as the entry point of the application and demonstrates the usage of the car rental system.
+### Core model
+| Component | Responsibility |
+| --- | --- |
+| `Car` | Value object capturing inventory details (make, model, year, category, pricing, mileage). |
+| `Customer` | Lightweight record of rental customer identity and driver licence. |
+| `ReservationRequest` | Input DTO carrying search and booking intent (vehicle id, dates). |
+| `Reservation` | Aggregate that links customer, vehicle and booking window, and derives total price. |
+| `Inventory` | Repository of vehicles. Performs filtering by availability, class, and budget. |
+| `ReservationService` | Transaction script that validates dates, interacts with inventory, creates bookings, processes payments and emits receipts. |
+| `PaymentStrategy` | Strategy interface; concrete implementations (credit card, wallet) can be swapped without touching booking logic. |
+| `CarRentalSystem` | Thin façade used by UI/client code. Coordinates the happy-path flow and exposes query + command methods. |
+
+### Key flows
+1. **Search**: `CarRentalSystem.find_cars` delegates to `Inventory` with a filter tuple (`CarType`, price range, required dates). The inventory first prunes by metadata and then by overlapping reservations.
+2. **Reserve**: `ReservationService.reserve` validates date ordering, double checks availability (defensive) and creates a `Reservation`. The reservation is persisted in-memory (dictionary keyed by booking id) for simplicity.
+3. **Payment**: Before marking a reservation confirmed the service charges the configured `PaymentStrategy`. Failures raise an exception and roll back the tentative block.
+4. **Cancel**: Removes the booking, releases the car in the inventory and records a cancellation timestamp.
 
 ### Implementation (Python)
-#### car.py
+The modules below are ordered in the same sequence they compose the flow: domain objects first,
+followed by services, then the façade and finally a usage example.
 
+#### models.py
 ```python
+from dataclasses import dataclass, field
+from datetime import date
+from enum import Enum
+from typing import Tuple
+
+
+class CarType(Enum):
+    SEDAN = "sedan"
+    SUV = "suv"
+    HATCHBACK = "hatchback"
+    CONVERTIBLE = "convertible"
+
+
+@dataclass(frozen=True)
 class Car:
-    def __init__(self, make, model, year, license_plate, rental_price_per_day):
-        self.make = make
-        self.model = model
-        self.year = year
-        self.license_plate = license_plate
-        self.rental_price_per_day = rental_price_per_day
-        self.available = True
+    car_id: str
+    make: str
+    model: str
+    year: int
+    category: CarType
+    daily_rate: float
+    mileage_limit: int | None = None
 
-    def get_rental_price_per_day(self):
-        return self.rental_price_per_day
 
-    def get_license_plate(self):
-        return self.license_plate
-
-    def get_make(self):
-        return self.make
-
-    def get_model(self):
-        return self.model
-
-    def is_available(self):
-        return self.available
-
-    def set_available(self, available):
-        self.available = available
-```
-
-#### car_rental_system_demo.py
-
-```python
-
-from rental_system import RentalSystem
-from car import Car
-from customer import Customer
-from datetime import date, timedelta
-
-class CarRentalSystemDemo:
-    @staticmethod
-    def run():
-            rental_system = RentalSystem.get_instance()
-
-            # Add cars to the rental system
-            rental_system.add_car(Car("Toyota", "Camry", 2022, "ABC123", 50.0))
-            rental_system.add_car(Car("Honda", "Civic", 2021, "XYZ789", 45.0))
-            rental_system.add_car(Car("Ford", "Mustang", 2023, "DEF456", 80.0))
-
-            # Create customers
-            customer1 = Customer("John Doe", "john@example.com", "DL1234")
-            customer2 = Customer("Jane Smith", "jane@example.com", "DL5678")
-
-            # Make reservations
-            start_date = date.today()
-            end_date = start_date + timedelta(days=3)
-            available_cars = rental_system.search_cars("Toyota", "Camry", start_date, end_date)
-
-            if available_cars:
-                selected_car = available_cars[0]
-                reservation = rental_system.make_reservation(customer1, selected_car, start_date, end_date)
-                if reservation is not None:
-                    payment_success = rental_system.process_payment(reservation)
-                    if payment_success:
-                        print(f"Reservation successful. Reservation ID: {reservation.get_reservation_id()}")
-                    else:
-                        print("Payment failed. Reservation canceled.")
-                        rental_system.cancel_reservation(reservation.get_reservation_id())
-                else:
-                    print("Selected car is not available for the given dates.")
-            else:
-                print("No available cars found for the given criteria.")
-
-if __name__ == "__main__":
-    CarRentalSystemDemo.run()
-```
-
-#### credit_card_payment_processor.py
-
-```python
-from payment_processor import PaymentProcessor
-
-class CreditCardPaymentProcessor(PaymentProcessor):
-    def process_payment(self, amount):
-        # Process credit card payment
-        # ...
-        return True
-```
-
-#### customer.py
-
-```python
+@dataclass(frozen=True)
 class Customer:
-    def __init__(self, name, contact_info, drivers_license_number):
-        self.name = name
-        self.contact_info = contact_info
-        self.drivers_license_number = drivers_license_number
+    customer_id: str
+    name: str
+    email: str
+    licence_number: str
+
+
+@dataclass(frozen=True)
+class ReservationRequest:
+    car_id: str
+    customer_id: str
+    start_date: date
+    end_date: date
+
+    def validate(self) -> None:
+        if self.start_date >= self.end_date:
+            raise ValueError("End date must be after start date")
+
+
+@dataclass
+class Reservation:
+    reservation_id: str
+    car: Car
+    customer: Customer
+    start_date: date
+    end_date: date
+    total_cost: float = field(init=False)
+
+    def __post_init__(self) -> None:
+        rental_days = (self.end_date - self.start_date).days
+        if rental_days <= 0:
+            raise ValueError("Reservation must span at least one day")
+        self.total_cost = rental_days * self.car.daily_rate
+
+    def overlaps(self, other_window: Tuple[date, date]) -> bool:
+        other_start, other_end = other_window
+        return not (self.end_date <= other_start or self.start_date >= other_end)
 ```
 
-#### payment_processor.py
+#### inventory.py
+```python
+from dataclasses import dataclass, field
+from datetime import date
+from typing import Dict, Iterable, List, Tuple
 
+from models import Car, CarType
+
+
+@dataclass
+class Inventory:
+    _cars: Dict[str, Car] = field(default_factory=dict)
+
+    def add_car(self, car: Car) -> None:
+        self._cars[car.car_id] = car
+
+    def remove_car(self, car_id: str) -> None:
+        self._cars.pop(car_id, None)
+
+    def list_cars(self) -> Iterable[Car]:
+        return self._cars.values()
+
+    def find_available(
+        self,
+        existing_bookings: Dict[str, List[Tuple[date, date]]],
+        *,
+        car_type: CarType | None = None,
+        price_between: Tuple[float, float] | None = None,
+        rental_window: Tuple[date, date] | None = None,
+    ) -> List[Car]:
+        matches: List[Car] = []
+        for car in self._cars.values():
+            if car_type and car.category != car_type:
+                continue
+            if price_between:
+                low, high = price_between
+                if not (low <= car.daily_rate <= high):
+                    continue
+            if rental_window and any(
+                _overlaps(rental_window, window)
+                for window in existing_bookings.get(car.car_id, [])
+            ):
+                continue
+            matches.append(car)
+        return matches
+
+
+def _overlaps(window_a: Tuple[date, date], window_b: Tuple[date, date]) -> bool:
+    start_a, end_a = window_a
+    start_b, end_b = window_b
+    return not (end_a <= start_b or start_a >= end_b)
+```
+
+#### payments.py
 ```python
 from abc import ABC, abstractmethod
 
-class PaymentProcessor(ABC):
+
+class PaymentStrategy(ABC):
     @abstractmethod
-    def process_payment(self, amount):
-        pass
+    def charge(self, *, customer_id: str, amount: float) -> None:
+        """Raise an exception if the payment fails."""
+
+
+class CreditCardPayment(PaymentStrategy):
+    def charge(self, *, customer_id: str, amount: float) -> None:
+        # Here we would integrate with a gateway. For the demo we assume success.
+        if amount <= 0:
+            raise ValueError("Amount must be positive")
+
+
+class WalletPayment(PaymentStrategy):
+    def charge(self, *, customer_id: str, amount: float) -> None:
+        # Stub for illustration.
+        if amount > 5000:
+            raise RuntimeError("Wallet limit exceeded")
 ```
 
-#### paypal_payment_processor.py
-
-```python
-from payment_processor import PaymentProcessor
-
-class PayPalPaymentProcessor(PaymentProcessor):
-    def process_payment(self, amount):
-        # Process PayPal payment
-        # ...
-        return True
-```
-
-#### rental_system.py
-
+#### reservation_service.py
 ```python
 import uuid
-from credit_card_payment_processor import CreditCardPaymentProcessor
-from reservation import Reservation
+from dataclasses import dataclass, field
+from datetime import date
+from typing import Dict, List, Tuple
 
-class RentalSystem:
-    _instance = None
+from inventory import Inventory
+from models import Customer, Reservation, ReservationRequest
+from payments import PaymentStrategy
 
-    def __init__(self):
-        if RentalSystem._instance is not None:
-            raise Exception("This class is a singleton!")
-        else:
-            RentalSystem._instance = self
-            self.cars = {}
-            self.reservations = {}
-            self.payment_processor = CreditCardPaymentProcessor()
 
-    @staticmethod
-    def get_instance():
-        if RentalSystem._instance is None:
-            RentalSystem()
-        return RentalSystem._instance
+@dataclass
+class ReservationService:
+    inventory: Inventory
+    payment: PaymentStrategy
+    customers: Dict[str, Customer] = field(default_factory=dict)
+    _reservations: Dict[str, Reservation] = field(default_factory=dict)
+    _car_bookings: Dict[str, List[Tuple[date, date]]] = field(default_factory=dict)
 
-    def add_car(self, car):
-        self.cars[car.license_plate] = car
+    def register_customer(self, customer: Customer) -> None:
+        self.customers[customer.customer_id] = customer
 
-    def remove_car(self, license_plate):
-        self.cars.pop(license_plate, None)
+    def reserve(self, request: ReservationRequest) -> Reservation:
+        request.validate()
+        customer = self.customers.get(request.customer_id)
+        if not customer:
+            raise LookupError(f"Unknown customer {request.customer_id}")
 
-    def search_cars(self, make, model, start_date, end_date):
-        available_cars = []
-        for car in self.cars.values():
-            if car.make.lower() == make.lower() and car.model.lower() == model.lower() and car.available:
-                if self.is_car_available(car, start_date, end_date):
-                    available_cars.append(car)
-        return available_cars
+        booking_window = (request.start_date, request.end_date)
+        available = self.inventory.find_available(
+            self._car_bookings, car_type=None, price_between=None, rental_window=booking_window
+        )
+        if request.car_id not in {car.car_id for car in available}:
+            raise ValueError("Car is not available for the selected window")
 
-    def is_car_available(self, car, start_date, end_date):
-        for reservation in self.reservations.values():
-            if reservation.get_car() == car:
-                if start_date < reservation.get_end_date() and end_date > reservation.get_start_date():
-                    return False
-        return True
+        car = next(car for car in self.inventory.list_cars() if car.car_id == request.car_id)
+        reservation = Reservation(
+            reservation_id=f"RES-{uuid.uuid4().hex[:8].upper()}",
+            car=car,
+            customer=customer,
+            start_date=request.start_date,
+            end_date=request.end_date,
+        )
 
-    def make_reservation(self, customer, car, start_date, end_date):
-        if self.is_car_available(car, start_date, end_date):
-            reservation_id = self.generate_reservation_id()
-            reservation = Reservation(reservation_id, customer, car, start_date, end_date)
-            self.reservations[reservation_id] = reservation
-            car.set_available(False)
-            return reservation
-        return None
+        self.payment.charge(customer_id=customer.customer_id, amount=reservation.total_cost)
 
-    def cancel_reservation(self, reservation_id):
-        reservation = self.reservations.pop(reservation_id, None)
-        if reservation is not None:
-            reservation.get_car().set_available(True)
+        self._reservations[reservation.reservation_id] = reservation
+        self._car_bookings.setdefault(car.car_id, []).append(booking_window)
+        return reservation
 
-    def process_payment(self, reservation):
-        return self.payment_processor.process_payment(reservation.get_total_price())
+    def cancel(self, reservation_id: str) -> None:
+        reservation = self._reservations.pop(reservation_id, None)
+        if not reservation:
+            return
+        window = (reservation.start_date, reservation.end_date)
+        self._car_bookings[reservation.car.car_id] = [
+            existing for existing in self._car_bookings.get(reservation.car.car_id, []) if existing != window
+        ]
 
-    def generate_reservation_id(self):
-        return "RES" + str(uuid.uuid4())[:8].upper()
+    def reservations_for(self, customer_id: str) -> List[Reservation]:
+        return [res for res in self._reservations.values() if res.customer.customer_id == customer_id]
+
+    def booked_windows(self, car_id: str) -> List[Tuple[date, date]]:
+        return list(self._car_bookings.get(car_id, []))
 ```
 
-#### reservation.py
+#### facade.py
+```python
+from datetime import date
+from typing import List, Tuple
 
+from inventory import Inventory
+from models import Car, CarType, Customer, Reservation, ReservationRequest
+from payments import CreditCardPayment
+from reservation_service import ReservationService
+
+
+class CarRentalSystem:
+    def __init__(self) -> None:
+        self.inventory = Inventory()
+        self.reservations = ReservationService(
+            inventory=self.inventory,
+            payment=CreditCardPayment(),
+        )
+
+    def add_car(self, car: Car) -> None:
+        self.inventory.add_car(car)
+
+    def register_customer(self, customer: Customer) -> None:
+        self.reservations.register_customer(customer)
+
+    def find_cars(
+        self,
+        *,
+        car_type: CarType | None = None,
+        price_between: Tuple[float, float] | None = None,
+        rental_window: Tuple[date, date] | None = None,
+    ) -> List[Car]:
+        return self.inventory.find_available(
+            self.reservations._car_bookings,
+            car_type=car_type,
+            price_between=price_between,
+            rental_window=rental_window,
+        )
+
+    def make_reservation(self, request: ReservationRequest) -> Reservation:
+        return self.reservations.reserve(request)
+
+    def cancel_reservation(self, reservation_id: str) -> None:
+        self.reservations.cancel(reservation_id)
+```
+
+#### demo.py
 ```python
 from datetime import date, timedelta
 
-class Reservation:
-    def __init__(self, reservation_id, customer, car, start_date, end_date):
-        self.reservation_id = reservation_id
-        self.customer = customer
-        self.car = car
-        self.start_date = start_date
-        self.end_date = end_date
-        self.total_price = self.calculate_total_price()
+from facade import CarRentalSystem
+from models import Car, CarType, Customer, ReservationRequest
 
-    def calculate_total_price(self):
-        days_rented = (self.end_date - self.start_date).days + 1
-        return self.car.rental_price_per_day * days_rented
 
-    def get_start_date(self):
-        return self.start_date
+def main() -> None:
+    system = CarRentalSystem()
+    system.add_car(Car("CAR-001", "Toyota", "Camry", 2022, CarType.SEDAN, daily_rate=55))
+    system.add_car(Car("CAR-002", "Honda", "CR-V", 2023, CarType.SUV, daily_rate=75))
 
-    def get_end_date(self):
-        return self.end_date
+    system.register_customer(Customer("CUS-001", "John Doe", "john@example.com", "DL123"))
 
-    def get_car(self):
-        return self.car
+    rental_window = (date.today(), date.today() + timedelta(days=4))
+    available = system.find_cars(car_type=CarType.SUV, rental_window=rental_window)
+    if not available:
+        print("No SUVs available for the chosen dates")
+        return
 
-    def get_total_price(self):
-        return self.total_price
+    request = ReservationRequest(
+        car_id=available[0].car_id,
+        customer_id="CUS-001",
+        start_date=rental_window[0],
+        end_date=rental_window[1],
+    )
+    reservation = system.make_reservation(request)
+    print(f"Reservation confirmed: {reservation.reservation_id} for {reservation.total_cost} USD")
 
-    def get_reservation_id(self):
-        return self.reservation_id
+
+if __name__ == "__main__":
+    main()
 ```
+
+### Extensibility notes
+- The booking service persists data in-memory to keep the example compact; swapping to a
+  database-backed repository only requires replacing the `Inventory` and `ReservationService` storage
+  dictionaries.
+- Pricing rules and add-ons (insurance, mileage penalties) can be encapsulated in a `PricingStrategy`
+  that the service calls before charging the payment method.
+- The payment layer is strategy-based, so support for new gateways or offline payments is isolated to
+  new concrete classes.

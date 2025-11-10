@@ -26,7 +26,7 @@ Behavioral design patterns focus on the communication and interaction between ob
 ## 1. Chain of Responsibility Pattern
 
 - **GeeksforGeeks**: [Chain of Responsibility Design Pattern](https://www.geeksforgeeks.org/system-design/chain-responsibility-design-pattern/)
-- **Chain of Responsibility Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
+- **Chain of Responsibility Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=LXVKB6deQMo)
 
 > **Avoid coupling the sender of a request to its receiver by giving more than one object a chance to handle the request. Chain the receiving objects and pass the request along the chain until an object handles it.**
 
@@ -35,7 +35,7 @@ Behavioral design patterns focus on the communication and interaction between ob
 ## 2. Command Pattern
 
 - **GeeksforGeeks**: [Command Design Pattern](https://www.geeksforgeeks.org/system-design/command-design-pattern/)
-- **Command Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
+- **Command Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=cnQZsN0jxEY)
 
 > **Encapsulate a request as an object, thereby letting you parameterize clients with different requests, queue or log requests, and support undoable operations.**
 
@@ -44,7 +44,7 @@ Behavioral design patterns focus on the communication and interaction between ob
 ## 3. Interpreter Pattern
 
 - **GeeksforGeeks**: [Interpreter Design Pattern](https://www.geeksforgeeks.org/system-design/interpreter-design-pattern/)
-- **Interpreter Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
+- **Interpreter Pattern in Python (Hindi)**: Coming soon on the [System Design Playlist](https://www.youtube.com/playlist?list=PLQEaRBV9gAFvzp6XhcNFpk1WdOcyVo9qT)
 
 > **Given a language, define a representation for its grammar along with an interpreter that uses the representation to interpret sentences in the language.**
 
@@ -53,7 +53,7 @@ Behavioral design patterns focus on the communication and interaction between ob
 ## 4. Mediator Pattern
 
 - **GeeksforGeeks**: [Mediator Design Pattern](https://www.geeksforgeeks.org/system-design/mediator-design-pattern/)
-- **Mediator Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
+- **Mediator Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=3lGIICzgyQQ)
 
 > **Define an object that encapsulates how a set of objects interact. Mediator promotes loose coupling by keeping objects from referring to each other explicitly.**
 
@@ -62,7 +62,7 @@ Behavioral design patterns focus on the communication and interaction between ob
 ## 5. Memento Pattern
 
 - **GeeksforGeeks**: [Memento Design Pattern](https://www.geeksforgeeks.org/system-design/memento-design-pattern/)
-- **Memento Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
+- **Memento Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=p8-ile_nWnY)
 
 > **Without violating encapsulation, capture and externalize an object's internal state so that the object can be restored to this state later.**
 
@@ -71,7 +71,7 @@ Behavioral design patterns focus on the communication and interaction between ob
 ## 6. Observer Pattern
 
 - **GeeksforGeeks**: [Observer Design Pattern](https://www.geeksforgeeks.org/system-design/observer-design-pattern/)
-- **Observer Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
+- **Observer Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=Jpmp4GY8r3Q)
 
 > **Define a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically.**
 
@@ -80,7 +80,7 @@ Behavioral design patterns focus on the communication and interaction between ob
 ## 7. State Pattern
 
 - **GeeksforGeeks**: [State Design Pattern](https://www.geeksforgeeks.org/system-design/state-design-pattern/)
-- **State Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=bJPmvie_p4)
+- **State Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=bJPmvie_p4w)
 
 > **Allow an object to alter its behavior when its internal state changes. The object will appear to change its class.**
 
@@ -98,7 +98,7 @@ Behavioral design patterns focus on the communication and interaction between ob
 ## 9. Template Method Pattern
 
 - **GeeksforGeeks**: [Template Method Design Pattern](https://www.geeksforgeeks.org/system-design/template-method-design-pattern/)
-- **Template Method Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
+- **Template Method Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=8-vE_bmEt18)
 
 > **Define the skeleton of an algorithm in an operation, deferring some steps to subclasses. Template Method lets subclasses redefine certain steps of an algorithm without changing the algorithm's structure.**
 
@@ -107,6 +107,6 @@ Behavioral design patterns focus on the communication and interaction between ob
 ## 10. Visitor Pattern
 
 - **GeeksforGeeks**: [Visitor Design Pattern](https://www.geeksforgeeks.org/system-design/visitor-design-pattern/)
-- **Visitor Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=PpKvPrl_gRg)
+- **Visitor Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=DnmsxnlCyl0)
 
 > **Represent an operation to be performed on the elements of an object structure. Visitor lets you define a new operation without changing the classes of the elements on which it operates.**

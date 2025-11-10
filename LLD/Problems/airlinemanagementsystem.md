@@ -14,16 +14,21 @@ Design an Airline Management System
 8. The system should be scalable and extensible to accommodate future enhancements and new features.
 
 ## Solution
-### Approach and Principles
-The reference design models the domain with cohesive classes that each own a clear responsibility.
-Interactions between components are mediated through well-defined interfaces, aligning with SOLID
-principles.
+### Design overview
+Center the system around the booking lifecycle: search → hold seats (PNR creation) → pay →
+ticket/itinerary issuance → pre/post-flight changes (reassign seats, cancellations/refunds).
 
-Singleton collaborators are used where a single coordinating instance (for example managers or
-processors) simplifies shared-state management across the system.
+- Inventory separate from booking to keep searches fast; seat allocation guarded per flight.
+- Per-flight per-cabin locks and idempotent booking APIs prevent double sells.
+- Payment as strategy; ancillaries (baggage, meals) added as priced services.
+- Schedules/aircraft/crew managed independently and propagated to flights.
 
-Key components include: Flight, Aircraft, Passenger, Booking, Seat, Payment, FlightSearch,
-BookingManager, PaymentProcessor, AirlineManagementSystem.
+### Core model
+- `Flight` (number, schedule, origin/destination, seat map), `Aircraft`
+- `Passenger`, `Seat` (type, status), `Booking` (PNR), `Payment`
+- `FlightSearch` (filters and availability), `BookingManager` (hold/confirm/cancel)
+- `PaymentProcessor` abstraction
+- `AirlineManagementSystem` façade
 
 ### Design Details
 1. The **Flight** class represents a flight in the airline management system, with properties such as flight number, source, destination, departure time, arrival time, and available seats.

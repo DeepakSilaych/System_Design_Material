@@ -14,16 +14,30 @@ Design a Cricket Information System like CricInfo
 8. The system should be extensible to accommodate new features and enhancements in the future.
 
 ## Solution
-### Approach and Principles
-The reference design models the domain with cohesive classes that each own a clear responsibility.
-Interactions between components are mediated through well-defined interfaces, aligning with SOLID
-principles.
+### Design overview
+Model live scoring as a stream of ball events applied to an aggregate (`Match`) that owns innings and
+score. Reads (scorecard/commentary) subscribe to event notifications to remain current without
+coupling to write paths.
 
-Singleton collaborators are used where a single coordinating instance (for example managers or
-processors) simplifies shared-state management across the system.
+- Command (ball update) → state transition → Observer fan-out to views.
+- Format-specific constraints (T20/ODI/Test) are encapsulated in a strategy.
+- Repositories isolate persistence; services orchestrate application use-cases.
 
-Key components include: Match, Team, Player, Scorecard, Innings, Over, Ball, MatchStatus,
-MatchService, ScorecardService, CricinfoSystem.
+### Core model
+- `Match` aggregate (state machine, innings list, observers)
+- `Innings` (append-only list of balls, derived totals, overs)
+- `Ball` (builder for rich event payload; runs/wicket/extra/commentary)
+- `Team`, `Player`, `PlayerStats`
+- `MatchState` (+ `Scheduled`, `Live`, `InBreak`, `Finished`)
+- `MatchFormatStrategy` (`T20`, `ODI`, `Test`)
+- Repositories: `MatchRepository`, `PlayerRepository`
+- Read-side observers: `ScorecardDisplay`, `CommentaryDisplay`, `UserNotifier`
+
+### Key flows
+1. Create and start a match (moves to `Live`)
+2. Process ball events → update innings → notify observers → evaluate end-of-over/innings/match
+3. Start next innings (state guarded)
+4. Finish match → publish final results and stats
 
 ### Design Details
 1. The **Match** class represents a cricket match, with properties such as ID, title, venue, start time, teams, status, and scorecard.

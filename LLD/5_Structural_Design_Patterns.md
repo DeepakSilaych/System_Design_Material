@@ -64,7 +64,7 @@ Structural design patterns focus on how classes and objects are composed to form
 
 - **GeeksforGeeks**: [Bridge Design Pattern](https://www.geeksforgeeks.org/system-design/bridge-design-pattern/)
 - **SourceMaking**: [Bridge Pattern](https://sourcemaking.com/design_patterns/bridge)
-- **Bridge Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=KVf8dwgTbiM&list=PLQEaRBV9gAFvzp6XhcNFpk1WdOcyVo9qT&index=25&pp=iAQB)
+- **Bridge Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=KVf8dwgTbiM)
 
 > **Decouple an abstraction from its implementation so that the two can vary independently.**
 

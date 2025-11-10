@@ -13,16 +13,30 @@ Design a Coffee Vending Machine
 7. The machine should handle multiple user requests concurrently and ensure thread safety.
 
 ## Solution
-### Approach and Principles
-The reference design models the domain with cohesive classes that each own a clear responsibility.
-Interactions between components are mediated through well-defined interfaces, aligning with SOLID
-principles.
+### Design overview
+The design layers the core domain (coffee types, ingredients) under a façade (`CoffeeVendingMachine`)
+that is driven by a small State Machine. The execution order is: choose product → pay → dispense →
+inventory update/refund.
 
-Singleton collaborators are used where a single coordinating instance (for example managers or
-processors) simplifies shared-state management across the system.
+- Template Method for common coffee preparation steps
+- Factory for base coffee type creation
+- Decorator for toppings without modifying base types
+- State pattern to control UI/UX transitions (ready → selecting → paid → dispense)
+- Thread-safe `Inventory` to handle concurrent orders
 
-Key components include: Coffee, Ingredient, Payment, CoffeeMachine, CoffeeMachine,
-CoffeeVendingMachine.
+### Core model
+- `Coffee` abstract (Template) with `Espresso`, `Latte`, `Cappuccino`
+- `CoffeeFactory` to construct a base coffee
+- `CoffeeDecorator` with `CaramelSyrupDecorator`, `ExtraSugarDecorator`
+- `Inventory` (singleton + locked mutations) for stock checks and deductions
+- `States`: `ReadyState`, `SelectingState`, `PaidState`, `OutOfIngredientState`
+- `CoffeeVendingMachine` façade exposing the flow (select → insert money → dispense/cancel)
+
+### Key flows
+1. Select coffee → create via Factory → wrap in decorators
+2. Insert money → State transitions to `Paid` once threshold met
+3. Dispense → deduct inventory, prepare (Template Method sequence), compute and return change
+4. Cancel → refund money and reset to `Ready`
 
 ### Design Details
 1. The **Coffee** class represents a coffee type with its name, price, and recipe (ingredients and their quantities).
