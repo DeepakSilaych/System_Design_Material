@@ -70,7 +70,7 @@ Behavioral design patterns focus on the communication and interaction between ob
 
 ## 6. Observer Pattern
 
-- **GeeksforGeeks**: [Observer Design Pattern](https://www.geeksforgeeks.org/system-design/observer-design-pattern/)
+- **GeeksforGeeks**: [Observer Design Pattern](https://www.geeksforgeeks.org/system-design/observer-pattern-set-1-introduction/)
 - **Observer Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=Jpmp4GY8r3Q)
 
 > **Define a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically.**
