@@ -34,7 +34,7 @@ Behavioral design patterns focus on the communication and interaction between ob
 
 ## 2. Command Pattern
 
-- **GeeksforGeeks**: [Command Design Pattern](https://www.geeksforgeeks.org/system-design/command-design-pattern/)
+- **GeeksforGeeks**: [Command Design Pattern](https://www.geeksforgeeks.org/system-design/command-pattern/)
 - **Command Pattern in Python (Hindi)**: [YouTube](https://www.youtube.com/watch?v=cnQZsN0jxEY)
 
 > **Encapsulate a request as an object, thereby letting you parameterize clients with different requests, queue or log requests, and support undoable operations.**
