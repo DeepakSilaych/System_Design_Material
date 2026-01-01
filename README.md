@@ -169,9 +169,3 @@ If this repository helped you prepare for your interviews, please consider:
 - **Starring this repository**
 - **Sharing with others** preparing for interviews
 - **Opening issues** for questions or suggestions
-
----
-
-### Keywords
-
-`system design` `system design interview` `low level design` `high level design` `LLD` `HLD` `design patterns` `SOLID principles` `distributed systems` `scalability` `microservices` `software architecture` `coding interview` `FAANG interview` `backend design` `object oriented design` `OOP` `software engineering interview`
